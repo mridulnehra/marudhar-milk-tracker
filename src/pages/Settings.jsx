@@ -138,7 +138,7 @@ function Settings() {
                         <div style={{ display: 'grid', gap: 'var(--spacing-2)' }}>
                             <div><strong>App:</strong> Marudhar Milk Tracker</div>
                             <div><strong>Version:</strong> 1.0.0</div>
-                            <div><strong>Developer:</strong> Custom Built</div>
+                            <div><strong>Developer:</strong> Mridul Nehra</div>
                         </div>
                     </div>
                 </div>
