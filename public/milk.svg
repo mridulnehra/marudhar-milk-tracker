@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="milkGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f0f4f8"/>
+      <stop offset="100%" style="stop-color:#e2e8f0"/>
+    </linearGradient>
+  </defs>
+  <!-- Milk bottle -->
+  <path d="M35 25 L35 15 C35 12 38 10 42 10 L58 10 C62 10 65 12 65 15 L65 25" fill="none" stroke="#3b82f6" stroke-width="3"/>
+  <rect x="30" y="25" width="40" height="60" rx="8" fill="url(#milkGradient)" stroke="#3b82f6" stroke-width="3"/>
+  <!-- Milk wave -->
+  <path d="M32 55 Q40 50 50 55 Q60 60 68 55 L68 80 Q68 83 65 83 L35 83 Q32 83 32 80 Z" fill="#bfdbfe"/>
+  <!-- Drop -->
+  <circle cx="50" cy="42" r="5" fill="#3b82f6"/>
+</svg>
