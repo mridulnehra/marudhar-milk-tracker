@@ -496,19 +496,13 @@ function AddEntry() {
 // Reusable component for payment method row
 function PaymentMethodRow({ label, litersValue, amountValue, onLitersChange, onAmountChange, autoCalc }) {
     return (
-        <div style={{
-            display: 'grid',
-            gridTemplateColumns: '140px 1fr 1fr',
-            gap: 'var(--spacing-3)',
-            alignItems: 'center',
-            padding: 'var(--spacing-3)',
-            background: 'var(--gray-50)',
-            borderRadius: 'var(--radius-lg)'
-        }}>
+        <div className="payment-method-row">
             <div style={{ fontWeight: '500', fontSize: 'var(--font-size-sm)' }}>{label}</div>
             <Input
                 placeholder="0"
                 suffix="L"
+                inputMode="decimal"
+                wrapperClassName="short-suffix"
                 value={litersValue}
                 onChange={(e) => onLitersChange(e.target.value.replace(/[^0-9.]/g, ''))}
                 style={{ marginBottom: 0 }}
@@ -516,6 +510,7 @@ function PaymentMethodRow({ label, litersValue, amountValue, onLitersChange, onA
             <Input
                 prefix="₹"
                 placeholder="0"
+                inputMode="decimal"
                 value={amountValue}
                 onChange={(e) => onAmountChange(e.target.value.replace(/[^0-9.]/g, ''))}
                 disabled={autoCalc}

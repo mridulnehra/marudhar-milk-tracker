@@ -6,6 +6,7 @@ function Input({
     prefix,
     suffix,
     className = '',
+    wrapperClassName = '',
     ...props
 }) {
     const hasPrefix = !!prefix
@@ -14,7 +15,7 @@ function Input({
     return (
         <div className="form-group">
             {label && <label className="form-label">{label}</label>}
-            <div className={`input-group ${hasSuffix ? 'has-suffix' : ''}`}>
+            <div className={`input-group ${hasSuffix ? 'has-suffix' : ''} ${wrapperClassName}`}>
                 {hasPrefix && <span className="input-prefix">{prefix}</span>}
                 <input
                     type={type}
