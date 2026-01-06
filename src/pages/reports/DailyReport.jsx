@@ -18,6 +18,7 @@ function DailyReport() {
     async function loadEntries() {
         try {
             setLoading(true)
+            setEntries([]) // Clear entries immediately to avoid showing stale data
             const data = await getEntriesByDateRange(fromDate, toDate)
             setEntries(data)
         } catch (err) {
