@@ -116,6 +116,7 @@ function DailyReport() {
                                     <thead>
                                         <tr>
                                             <th>Date</th>
+                                            <th>ATM</th>
                                             <th>Starting (L)</th>
                                             <th>Leftover (L)</th>
                                             <th>Distributed (L)</th>
@@ -132,6 +133,16 @@ function DailyReport() {
                                         {entries.map(entry => (
                                             <tr key={entry.id}>
                                                 <td style={{ fontWeight: '600' }}>{formatDate(entry.date, 'dd-MMM')}</td>
+                                                <td>
+                                                    <span style={{
+                                                        padding: 'var(--spacing-1) var(--spacing-2)',
+                                                        background: 'var(--gray-100)',
+                                                        borderRadius: 'var(--radius-md)',
+                                                        fontSize: 'var(--font-size-sm)'
+                                                    }}>
+                                                        {entry.milk_atms?.name || 'Unknown'}
+                                                    </span>
+                                                </td>
                                                 <td>{Number(entry.starting_milk).toFixed(1)}</td>
                                                 <td>{Number(entry.leftover_milk).toFixed(1)}</td>
                                                 <td style={{ color: 'var(--success-600)', fontWeight: '500' }}>
@@ -149,6 +160,7 @@ function DailyReport() {
                                         {/* Totals Row */}
                                         <tr style={{ background: 'var(--gray-100)', fontWeight: '700' }}>
                                             <td>TOTALS</td>
+                                            <td></td>
                                             <td>{totals.startingMilk.toFixed(1)}</td>
                                             <td>{totals.leftoverMilk.toFixed(1)}</td>
                                             <td style={{ color: 'var(--success-600)' }}>{totals.distributedMilk.toFixed(1)}</td>

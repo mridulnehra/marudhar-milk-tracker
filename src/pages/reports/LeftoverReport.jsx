@@ -68,7 +68,7 @@ function LeftoverReport() {
                             <div className="report-card warning">
                                 <h3>Total Leftover</h3>
                                 <div className="value">{formatLiters(totalLeftover)}</div>
-                                <div className="subtext">{entries.length} days</div>
+                                <div className="subtext">{entries.length} entries</div>
                             </div>
                             <div className="report-card">
                                 <h3>Average Daily Leftover</h3>
@@ -77,12 +77,16 @@ function LeftoverReport() {
                             <div className="report-card" style={{ borderLeftColor: 'var(--error-500)' }}>
                                 <h3>Highest Leftover</h3>
                                 <div className="value">{highest ? formatLiters(highest.leftoverMilk) : '-'}</div>
-                                <div className="subtext">{highest ? formatDate(highest.date, 'dd MMM') : ''}</div>
+                                <div className="subtext">
+                                    {highest ? `${highest.atmName || 'ATM'} • ${formatDate(highest.date, 'dd MMM')}` : ''}
+                                </div>
                             </div>
                             <div className="report-card success">
                                 <h3>Lowest Leftover</h3>
                                 <div className="value">{lowest ? formatLiters(lowest.leftoverMilk) : '-'}</div>
-                                <div className="subtext">{lowest ? formatDate(lowest.date, 'dd MMM') : ''}</div>
+                                <div className="subtext">
+                                    {lowest ? `${lowest.atmName || 'ATM'} • ${formatDate(lowest.date, 'dd MMM')}` : ''}
+                                </div>
                             </div>
                         </div>
 
@@ -110,13 +114,23 @@ function LeftoverReport() {
                             <div className="card-body" style={{ padding: 0 }}>
                                 <div className="table-container">
                                     <table className="table">
-                                        <thead><tr><th>Date</th><th>Starting (L)</th><th>Leftover (L)</th><th>Leftover %</th></tr></thead>
+                                        <thead><tr><th>Date</th><th>ATM</th><th>Starting (L)</th><th>Leftover (L)</th><th>Leftover %</th></tr></thead>
                                         <tbody>
                                             {entries.map(e => {
                                                 const pct = e.startingMilk ? (e.leftoverMilk / e.startingMilk * 100) : 0
                                                 return (
                                                     <tr key={e.id}>
                                                         <td style={{ fontWeight: '600' }}>{formatDate(e.date, 'dd-MMM')}</td>
+                                                        <td>
+                                                            <span style={{
+                                                                padding: 'var(--spacing-1) var(--spacing-2)',
+                                                                background: 'var(--gray-100)',
+                                                                borderRadius: 'var(--radius-md)',
+                                                                fontSize: 'var(--font-size-sm)'
+                                                            }}>
+                                                                {e.atmName || 'Unknown'}
+                                                            </span>
+                                                        </td>
                                                         <td>{e.startingMilk.toFixed(1)}</td>
                                                         <td style={{ color: pct > 15 ? 'var(--error-500)' : pct > 10 ? 'var(--warning-600)' : 'var(--success-600)', fontWeight: '500' }}>{e.leftoverMilk.toFixed(1)}</td>
                                                         <td>{formatPercentage(pct)}</td>
