@@ -2,10 +2,16 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '../components/Button'
 import Input from '../components/Input'
-import { getEntryByDateAndAtm, createEntry, updateEntry, transformEntry } from '../services/entriesService'
+import { getEntryByDateAtmAndShift, createEntry, updateEntry, transformEntry } from '../services/entriesService'
 import { getAllAtms } from '../services/atmsService'
 import { getMilkRate } from '../services/settingsService'
 import { formatCurrency, formatLiters, formatDateForInput } from '../utils/formatters'
+
+// Helper to determine default shift based on current time
+function getDefaultShift() {
+    const hour = new Date().getHours()
+    return hour < 12 ? 'morning' : 'evening'
+}
 
 function AddEntry() {
     const navigate = useNavigate()
@@ -21,6 +27,7 @@ function AddEntry() {
     const [formData, setFormData] = useState({
         date: formatDateForInput(new Date()),
         atmId: searchParams.get('atm') || '',
+        shift: getDefaultShift(),
         totalMilk: '',
         // Payment methods - each with liters and amount
         cashLiters: '',
@@ -42,12 +49,12 @@ function AddEntry() {
         loadInitialData()
     }, [])
 
-    // Check for existing entry when date or ATM changes
+    // Check for existing entry when date, ATM, or shift changes
     useEffect(() => {
-        if (formData.date && formData.atmId) {
-            checkExistingEntry(formData.date, formData.atmId)
+        if (formData.date && formData.atmId && formData.shift) {
+            checkExistingEntry(formData.date, formData.atmId, formData.shift)
         }
-    }, [formData.date, formData.atmId])
+    }, [formData.date, formData.atmId, formData.shift])
 
     async function loadInitialData() {
         try {
@@ -80,11 +87,11 @@ function AddEntry() {
         }
     }
 
-    async function checkExistingEntry(date, atmId) {
-        if (!date || !atmId) return
+    async function checkExistingEntry(date, atmId, shift) {
+        if (!date || !atmId || !shift) return
 
         try {
-            const entry = await getEntryByDateAndAtm(date, atmId)
+            const entry = await getEntryByDateAtmAndShift(date, atmId, shift)
 
             if (entry) {
                 const transformed = transformEntry(entry)
@@ -92,6 +99,7 @@ function AddEntry() {
                 setFormData({
                     date: transformed.date,
                     atmId: transformed.atmId,
+                    shift: transformed.shift || shift,
                     totalMilk: transformed.totalMilk.toString(),
                     cashLiters: transformed.cashLiters.toString(),
                     cash: transformed.cash.toString(),
@@ -108,7 +116,7 @@ function AddEntry() {
                 })
             } else {
                 setExistingEntry(null)
-                // Reset payment fields but keep date, ATM, and total milk
+                // Reset payment fields but keep date, ATM, shift, and total milk
                 setFormData(prev => ({
                     ...prev,
                     cashLiters: '', cash: '',
@@ -126,7 +134,7 @@ function AddEntry() {
 
     function handleChange(field, value) {
         // Only allow numbers and decimal point for numeric fields
-        if (field !== 'date' && field !== 'atmId') {
+        if (field !== 'date' && field !== 'atmId' && field !== 'shift') {
             value = value.replace(/[^0-9.]/g, '')
             const parts = value.split('.')
             if (parts.length > 2) {
@@ -199,6 +207,7 @@ function AddEntry() {
         const entryData = {
             date: formData.date,
             atmId: formData.atmId,
+            shift: formData.shift,
             totalMilk: parseFloat(formData.totalMilk) || 0,
             leftoverMilk,
             distributedMilk,
@@ -222,10 +231,10 @@ function AddEntry() {
 
             if (existingEntry) {
                 await updateEntry(existingEntry.id, entryData)
-                setSuccessMessage(`✓ Entry updated for ${getAtmName(formData.atmId)} on ${formData.date}`)
+                setSuccessMessage(`✓ Entry updated for ${getAtmName(formData.atmId)} (${formData.shift}) on ${formData.date}`)
             } else {
                 await createEntry(entryData)
-                setSuccessMessage(`✓ Entry saved for ${getAtmName(formData.atmId)} on ${formData.date}`)
+                setSuccessMessage(`✓ Entry saved for ${getAtmName(formData.atmId)} (${formData.shift}) on ${formData.date}`)
             }
 
             setTimeout(() => navigate('/'), 1500)
@@ -294,7 +303,7 @@ function AddEntry() {
                     <div className="alert alert-warning" style={{ marginBottom: 'var(--spacing-6)' }}>
                         <span className="alert-icon">📅</span>
                         <div className="alert-content">
-                            <div className="alert-title">Entry exists for this ATM on this date</div>
+                            <div className="alert-title">Entry exists for this ATM ({formData.shift}) on this date</div>
                             <div className="alert-message">You are editing an existing entry. Changes will update the record.</div>
                         </div>
                     </div>
@@ -337,6 +346,57 @@ function AddEntry() {
                                     ))}
                                 </select>
                                 {errors.atmId && <span className="input-error">{errors.atmId}</span>}
+                            </div>
+                        </div>
+
+                        {/* Shift Selector */}
+                        <div className="input-group" style={{ marginTop: 'var(--spacing-4)' }}>
+                            <label className="input-label">Shift</label>
+                            <div style={{
+                                display: 'flex',
+                                gap: 'var(--spacing-2)',
+                                marginTop: 'var(--spacing-2)'
+                            }}>
+                                <button
+                                    type="button"
+                                    onClick={() => handleChange('shift', 'morning')}
+                                    style={{
+                                        flex: 1,
+                                        padding: 'var(--spacing-3) var(--spacing-4)',
+                                        border: '2px solid',
+                                        borderColor: formData.shift === 'morning' ? 'var(--warning-500)' : 'var(--gray-200)',
+                                        borderRadius: 'var(--radius-lg)',
+                                        background: formData.shift === 'morning'
+                                            ? 'linear-gradient(135deg, var(--warning-50) 0%, var(--warning-100) 100%)'
+                                            : 'var(--white)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        fontWeight: formData.shift === 'morning' ? '600' : '400',
+                                        color: formData.shift === 'morning' ? 'var(--warning-700)' : 'var(--gray-600)'
+                                    }}
+                                >
+                                    🌅 Morning
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => handleChange('shift', 'evening')}
+                                    style={{
+                                        flex: 1,
+                                        padding: 'var(--spacing-3) var(--spacing-4)',
+                                        border: '2px solid',
+                                        borderColor: formData.shift === 'evening' ? 'var(--primary-500)' : 'var(--gray-200)',
+                                        borderRadius: 'var(--radius-lg)',
+                                        background: formData.shift === 'evening'
+                                            ? 'linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%)'
+                                            : 'var(--white)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                        fontWeight: formData.shift === 'evening' ? '600' : '400',
+                                        color: formData.shift === 'evening' ? 'var(--primary-700)' : 'var(--gray-600)'
+                                    }}
+                                >
+                                    🌙 Evening
+                                </button>
                             </div>
                         </div>
                     </div>

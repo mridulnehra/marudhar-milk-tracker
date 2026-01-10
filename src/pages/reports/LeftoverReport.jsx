@@ -114,13 +114,18 @@ function LeftoverReport() {
                             <div className="card-body" style={{ padding: 0 }}>
                                 <div className="table-container">
                                     <table className="table">
-                                        <thead><tr><th>Date</th><th>ATM</th><th>Starting (L)</th><th>Leftover (L)</th><th>Leftover %</th></tr></thead>
+                                        <thead><tr><th>Date</th><th>Shift</th><th>ATM</th><th>Starting (L)</th><th>Leftover (L)</th><th>Leftover %</th></tr></thead>
                                         <tbody>
                                             {entries.map(e => {
                                                 const pct = e.startingMilk ? (e.leftoverMilk / e.startingMilk * 100) : 0
                                                 return (
                                                     <tr key={e.id}>
                                                         <td style={{ fontWeight: '600' }}>{formatDate(e.date, 'dd-MMM')}</td>
+                                                        <td>
+                                                            <span className={`badge ${e.shift === 'morning' ? 'badge-warning' : 'badge-info'}`}>
+                                                                {e.shift === 'morning' ? '🌅 Morning' : '🌙 Evening'}
+                                                            </span>
+                                                        </td>
                                                         <td>
                                                             <span style={{
                                                                 padding: 'var(--spacing-1) var(--spacing-2)',

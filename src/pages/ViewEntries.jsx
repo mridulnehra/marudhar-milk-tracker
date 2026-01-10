@@ -193,6 +193,7 @@ function ViewEntries() {
                                     <thead>
                                         <tr>
                                             <th>Date</th>
+                                            <th>Shift</th>
                                             <th>ATM</th>
                                             <th>Total (L)</th>
                                             <th>Distributed (L)</th>
@@ -205,6 +206,17 @@ function ViewEntries() {
                                         {entries.map(entry => (
                                             <tr key={entry.id}>
                                                 <td style={{ fontWeight: '600' }}>{formatDate(entry.date, 'dd MMM')}</td>
+                                                <td>
+                                                    <span style={{
+                                                        padding: 'var(--spacing-1) var(--spacing-2)',
+                                                        background: entry.shift === 'morning' ? 'var(--warning-50)' : 'var(--primary-50)',
+                                                        borderRadius: 'var(--radius-md)',
+                                                        fontSize: 'var(--font-size-sm)',
+                                                        color: entry.shift === 'morning' ? 'var(--warning-700)' : 'var(--primary-700)'
+                                                    }}>
+                                                        {entry.shift === 'morning' ? '🌅' : '🌙'}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <span style={{
                                                         padding: 'var(--spacing-1) var(--spacing-2)',
@@ -267,14 +279,28 @@ function ViewEntries() {
                             padding: 'var(--spacing-3)',
                             background: 'var(--gray-100)',
                             borderRadius: 'var(--radius-md)',
-                            marginBottom: 'var(--spacing-4)'
+                            marginBottom: 'var(--spacing-4)',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
                         }}>
-                            <div style={{ fontWeight: '600' }}>🏧 {viewEntry.atmName}</div>
-                            {viewEntry.atmLocation && (
-                                <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-500)' }}>
-                                    📍 {viewEntry.atmLocation}
-                                </div>
-                            )}
+                            <div>
+                                <div style={{ fontWeight: '600' }}>🏧 {viewEntry.atmName}</div>
+                                {viewEntry.atmLocation && (
+                                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-500)' }}>
+                                        📍 {viewEntry.atmLocation}
+                                    </div>
+                                )}
+                            </div>
+                            <span style={{
+                                padding: 'var(--spacing-2) var(--spacing-3)',
+                                background: viewEntry.shift === 'morning' ? 'var(--warning-100)' : 'var(--primary-100)',
+                                borderRadius: 'var(--radius-md)',
+                                fontWeight: '600',
+                                color: viewEntry.shift === 'morning' ? 'var(--warning-700)' : 'var(--primary-700)'
+                            }}>
+                                {viewEntry.shift === 'morning' ? '🌅 Morning' : '🌙 Evening'}
+                            </span>
                         </div>
 
                         <h4 style={{ marginBottom: 'var(--spacing-3)', color: 'var(--gray-600)' }}>Milk Inventory</h4>

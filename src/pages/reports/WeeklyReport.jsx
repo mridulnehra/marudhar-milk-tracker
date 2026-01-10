@@ -186,6 +186,7 @@ function WeeklyReport() {
                                             <tr>
                                                 <th>Day</th>
                                                 <th>Date</th>
+                                                <th>Shift</th>
                                                 {selectedAtm === 'all' && <th>ATM</th>}
                                                 <th>Total (L)</th>
                                                 <th>Distributed (L)</th>
@@ -198,6 +199,11 @@ function WeeklyReport() {
                                                 <tr key={entry.id}>
                                                     <td>{formatDate(entry.date, 'EEE')}</td>
                                                     <td style={{ fontWeight: '600' }}>{formatDate(entry.date, 'dd MMM')}</td>
+                                                    <td>
+                                                        <span className={`badge ${entry.shift === 'morning' ? 'badge-warning' : 'badge-info'}`}>
+                                                            {entry.shift === 'morning' ? '🌅 Morning' : '🌙 Evening'}
+                                                        </span>
+                                                    </td>
                                                     {selectedAtm === 'all' && (
                                                         <td>
                                                             <span style={{

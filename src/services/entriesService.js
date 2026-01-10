@@ -1,7 +1,26 @@
 import { supabase } from './supabase'
 import { format, parseISO, startOfMonth, endOfMonth, startOfWeek, endOfWeek } from 'date-fns'
 
-// Get entry by date and ATM
+// Get entry by date, ATM, and shift
+export async function getEntryByDateAtmAndShift(date, atmId, shift = 'morning') {
+    const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd')
+
+    const { data, error } = await supabase
+        .from('daily_entries')
+        .select('*')
+        .eq('date', dateStr)
+        .eq('atm_id', atmId)
+        .eq('shift', shift)
+        .single()
+
+    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+        throw error
+    }
+
+    return data
+}
+
+// Get entry by date and ATM (legacy - returns first match)
 export async function getEntryByDateAndAtm(date, atmId) {
     const dateStr = typeof date === 'string' ? date : format(date, 'yyyy-MM-dd')
 
@@ -10,9 +29,11 @@ export async function getEntryByDateAndAtm(date, atmId) {
         .select('*')
         .eq('date', dateStr)
         .eq('atm_id', atmId)
+        .order('shift', { ascending: true })
+        .limit(1)
         .single()
 
-    if (error && error.code !== 'PGRST116') { // PGRST116 = no rows found
+    if (error && error.code !== 'PGRST116') {
         throw error
     }
 
@@ -105,6 +126,7 @@ export async function createEntry(entryData) {
         .insert([{
             date: entryData.date,
             atm_id: entryData.atmId,
+            shift: entryData.shift || 'morning',
             starting_milk: entryData.totalMilk || entryData.startingMilk,
             leftover_milk: entryData.leftoverMilk,
             distributed_milk: entryData.distributedMilk,
@@ -275,6 +297,7 @@ export function transformEntry(dbEntry) {
         id: dbEntry.id,
         date: dbEntry.date,
         atmId: dbEntry.atm_id,
+        shift: dbEntry.shift || 'morning',
         atmName: dbEntry.milk_atms?.name || 'Unknown ATM',
         atmLocation: dbEntry.milk_atms?.location || '',
         totalMilk: Number(dbEntry.starting_milk),

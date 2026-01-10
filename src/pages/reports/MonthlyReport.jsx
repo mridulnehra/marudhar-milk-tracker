@@ -311,7 +311,7 @@ function MonthlyReport() {
                                         <thead>
                                             <tr>
                                                 <th>Week</th>
-                                                <th>Days Recorded</th>
+                                                <th>Entries</th>
                                                 <th>Milk Distributed (L)</th>
                                                 <th>Total Revenue (₹)</th>
                                                 <th>Avg Leftover (L)</th>

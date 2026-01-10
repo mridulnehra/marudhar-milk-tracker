@@ -116,6 +116,7 @@ function DailyReport() {
                                     <thead>
                                         <tr>
                                             <th>Date</th>
+                                            <th>Shift</th>
                                             <th>ATM</th>
                                             <th>Starting (L)</th>
                                             <th>Leftover (L)</th>
@@ -133,6 +134,17 @@ function DailyReport() {
                                         {entries.map(entry => (
                                             <tr key={entry.id}>
                                                 <td style={{ fontWeight: '600' }}>{formatDate(entry.date, 'dd-MMM')}</td>
+                                                <td>
+                                                    <span style={{
+                                                        padding: 'var(--spacing-1) var(--spacing-2)',
+                                                        background: entry.shift === 'morning' ? 'var(--warning-50)' : 'var(--primary-50)',
+                                                        borderRadius: 'var(--radius-md)',
+                                                        fontSize: 'var(--font-size-sm)',
+                                                        color: entry.shift === 'morning' ? 'var(--warning-700)' : 'var(--primary-700)'
+                                                    }}>
+                                                        {entry.shift === 'morning' ? '🌅' : '🌙'}
+                                                    </span>
+                                                </td>
                                                 <td>
                                                     <span style={{
                                                         padding: 'var(--spacing-1) var(--spacing-2)',
@@ -160,6 +172,7 @@ function DailyReport() {
                                         {/* Totals Row */}
                                         <tr style={{ background: 'var(--gray-100)', fontWeight: '700' }}>
                                             <td>TOTALS</td>
+                                            <td></td>
                                             <td></td>
                                             <td>{totals.startingMilk.toFixed(1)}</td>
                                             <td>{totals.leftoverMilk.toFixed(1)}</td>

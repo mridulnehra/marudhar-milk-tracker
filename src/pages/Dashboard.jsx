@@ -198,6 +198,17 @@ function Dashboard() {
                                         </div>
                                         <span style={{
                                             padding: 'var(--spacing-1) var(--spacing-2)',
+                                            background: entry.shift === 'morning' ? 'var(--warning-100)' : 'var(--primary-100)',
+                                            color: entry.shift === 'morning' ? 'var(--warning-700)' : 'var(--primary-700)',
+                                            borderRadius: 'var(--radius-full)',
+                                            fontSize: 'var(--font-size-xs)',
+                                            fontWeight: '600',
+                                            marginRight: 'var(--spacing-1)'
+                                        }}>
+                                            {entry.shift === 'morning' ? '🌅' : '🌙'}
+                                        </span>
+                                        <span style={{
+                                            padding: 'var(--spacing-1) var(--spacing-2)',
                                             background: 'var(--success-100)',
                                             color: 'var(--success-700)',
                                             borderRadius: 'var(--radius-full)',
