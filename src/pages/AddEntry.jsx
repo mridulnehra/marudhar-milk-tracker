@@ -455,15 +455,30 @@ function AddEntry() {
                             />
                         </div>
 
-                        {/* Total Amount */}
-                        <div className="calculated-value" style={{
-                            marginTop: 'var(--spacing-6)',
-                            background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%)',
-                            borderColor: 'var(--primary-500)'
+                        {/* Total Liters & Total Amount */}
+                        <div style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr 1fr',
+                            gap: 'var(--spacing-4)',
+                            marginTop: 'var(--spacing-6)'
                         }}>
-                            <div className="calculated-value-label" style={{ color: 'var(--primary-600)' }}>Total Amount</div>
-                            <div className="calculated-value-number" style={{ color: 'var(--primary-600)', fontSize: 'var(--font-size-3xl)' }}>
-                                {formatCurrency(totalAmount)}
+                            <div className="calculated-value" style={{
+                                background: 'linear-gradient(135deg, var(--success-50) 0%, var(--success-100) 100%)',
+                                borderColor: 'var(--success-500)'
+                            }}>
+                                <div className="calculated-value-label" style={{ color: 'var(--success-600)' }}>Total Liters</div>
+                                <div className="calculated-value-number" style={{ color: 'var(--success-600)', fontSize: 'var(--font-size-2xl)' }}>
+                                    {formatLiters(distributedMilk)}
+                                </div>
+                            </div>
+                            <div className="calculated-value" style={{
+                                background: 'linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%)',
+                                borderColor: 'var(--primary-500)'
+                            }}>
+                                <div className="calculated-value-label" style={{ color: 'var(--primary-600)' }}>Total Amount</div>
+                                <div className="calculated-value-number" style={{ color: 'var(--primary-600)', fontSize: 'var(--font-size-2xl)' }}>
+                                    {formatCurrency(totalAmount)}
+                                </div>
                             </div>
                         </div>
                     </div>
