@@ -49,6 +49,9 @@ function DailyReport() {
         cash: 0, upi: 0, card: 0, udhaarPermanent: 0, udhaarTemporary: 0, others: 0, totalAmount: 0
     })
 
+    const avgRate = totals.distributedMilk > 0 ? totals.totalAmount / totals.distributedMilk : 0
+    const totalLeftoverValue = totals.leftoverMilk * avgRate
+
     return (
         <>
             <header className="page-header">
@@ -175,7 +178,14 @@ function DailyReport() {
                                             <td></td>
                                             <td></td>
                                             <td>{totals.startingMilk.toFixed(1)}</td>
-                                            <td>{totals.leftoverMilk.toFixed(1)}</td>
+                                            <td>
+                                                <div>{totals.leftoverMilk.toFixed(1)}</div>
+                                                {totalLeftoverValue > 0 && (
+                                                    <div style={{ fontSize: '0.75em', opacity: 0.8, fontWeight: '600' }}>
+                                                        {formatCurrency(totalLeftoverValue)}
+                                                    </div>
+                                                )}
+                                            </td>
                                             <td style={{ color: 'var(--success-600)' }}>{totals.distributedMilk.toFixed(1)}</td>
                                             <td>{formatCurrency(totals.cash)}</td>
                                             <td>{formatCurrency(totals.upi)}</td>

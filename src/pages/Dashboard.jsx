@@ -49,6 +49,12 @@ function Dashboard() {
         atmCount: todayEntries.length
     }
 
+    // Calculate estimated value of leftover milk
+    const avgRate = todayCombined.distributedMilk > 0
+        ? todayCombined.totalAmount / todayCombined.distributedMilk
+        : 0
+    const leftoverValue = todayCombined.leftoverMilk * avgRate
+
     // Check which ATMs have entries today
     const atmsWithEntries = new Set(todayEntries.map(e => e.atmId))
     const atmsWithoutEntries = atms.filter(atm => !atmsWithEntries.has(atm.id))
@@ -142,7 +148,16 @@ function Dashboard() {
                             <StatCard
                                 icon="📦"
                                 iconClass="warning"
-                                value={formatLiters(todayCombined.leftoverMilk)}
+                                value={
+                                    <div>
+                                        {formatLiters(todayCombined.leftoverMilk)}
+                                        {leftoverValue > 0 && (
+                                            <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                                {formatCurrency(leftoverValue)}
+                                            </div>
+                                        )}
+                                    </div>
+                                }
                                 label="Leftover"
                                 variant="warning"
                             />
@@ -293,41 +308,58 @@ function Dashboard() {
                     <h2 style={{
                         fontSize: 'var(--font-size-lg)',
                         fontWeight: '600',
-                        marginBottom: 'var(--spacing-4)',
                         color: 'var(--gray-700)'
                     }}>
                         This Month's Summary
                     </h2>
 
-                    <div className="stat-grid">
-                        <StatCard
-                            icon="🚚"
-                            iconClass="success"
-                            value={formatLiters(monthSummary?.totalDistributed || 0)}
-                            label="Total Distributed"
-                            variant="success"
-                        />
-                        <StatCard
-                            icon="💵"
-                            iconClass="info"
-                            value={formatCurrency(monthSummary?.totalRevenue || 0)}
-                            label="Total Revenue"
-                            variant="info"
-                        />
-                        <StatCard
-                            icon="📊"
-                            iconClass="primary"
-                            value={formatLiters(monthSummary?.avgDistributed || 0)}
-                            label="Avg Daily Distribution"
-                        />
-                        <StatCard
-                            icon="📦"
-                            iconClass="warning"
-                            value={formatLiters(monthSummary?.avgLeftover || 0)}
-                            label="Avg Daily Leftover"
-                            variant="warning"
-                        />
-                    </div>
+                    {(() => {
+                        const monthlyAvgRate = monthSummary?.totalDistributed > 0
+                            ? monthSummary.totalRevenue / monthSummary.totalDistributed
+                            : 0
+                        const avgLeftoverValue = (monthSummary?.avgLeftover || 0) * monthlyAvgRate
+
+                        return (
+                            <div className="stat-grid">
+                                <StatCard
+                                    icon="🚚"
+                                    iconClass="success"
+                                    value={formatLiters(monthSummary?.totalDistributed || 0)}
+                                    label="Total Distributed"
+                                    variant="success"
+                                />
+                                <StatCard
+                                    icon="💵"
+                                    iconClass="info"
+                                    value={formatCurrency(monthSummary?.totalRevenue || 0)}
+                                    label="Total Revenue"
+                                    variant="info"
+                                />
+                                <StatCard
+                                    icon="📊"
+                                    iconClass="primary"
+                                    value={formatLiters(monthSummary?.avgDistributed || 0)}
+                                    label="Avg Daily Distribution"
+                                />
+                                <StatCard
+                                    icon="📦"
+                                    iconClass="warning"
+                                    value={
+                                        <div>
+                                            {formatLiters(monthSummary?.avgLeftover || 0)}
+                                            {avgLeftoverValue > 0 && (
+                                                <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                                    {formatCurrency(avgLeftoverValue)}
+                                                </div>
+                                            )}
+                                        </div>
+                                    }
+                                    label="Avg Daily Leftover"
+                                    variant="warning"
+                                />
+                            </div>
+                        )
+                    })()}
                 </section>
 
                 {/* Quick Actions */}
@@ -375,7 +407,7 @@ function Dashboard() {
                         </Link>
                     </div>
                 </section>
-            </div>
+            </div >
         </>
     )
 }

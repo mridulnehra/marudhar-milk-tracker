@@ -64,6 +64,10 @@ function WeeklyReport() {
     const avgDistributed = entries.length ? totalDistributed / entries.length : 0
     const avgLeftover = entries.length ? totalLeftover / entries.length : 0
 
+    // Calculate estimated value of leftover milk
+    const avgRate = totalDistributed > 0 ? totalRevenue / totalDistributed : 0
+    const avgLeftoverValue = avgLeftover * avgRate
+
     // Payment breakdown with liters
     const payments = {
         cash: { liters: entries.reduce((sum, e) => sum + (e.cashLiters || 0), 0), amount: entries.reduce((sum, e) => sum + e.cash, 0) },
@@ -149,7 +153,14 @@ function WeeklyReport() {
                             </div>
                             <div className="report-card warning">
                                 <h3>Avg Daily Leftover</h3>
-                                <div className="value">{formatLiters(avgLeftover)}</div>
+                                <div className="value">
+                                    {formatLiters(avgLeftover)}
+                                    {avgLeftoverValue > 0 && (
+                                        <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                            {formatCurrency(avgLeftoverValue)}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="report-card" style={{ borderLeftColor: 'var(--info-500)' }}>
                                 <h3>Total Revenue</h3>

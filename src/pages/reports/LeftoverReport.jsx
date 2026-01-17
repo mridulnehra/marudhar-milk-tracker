@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getEntriesByDateRange, transformEntry } from '../../services/entriesService'
-import { formatLiters, formatDate, formatDateForInput, formatPercentage } from '../../utils/formatters'
+import { formatLiters, formatDate, formatDateForInput, formatPercentage, formatCurrency } from '../../utils/formatters'
 import { subDays } from 'date-fns'
 
 function LeftoverReport() {
@@ -25,6 +25,13 @@ function LeftoverReport() {
     const sorted = [...entries].sort((a, b) => b.leftoverMilk - a.leftoverMilk)
     const highest = sorted[0] || null
     const lowest = sorted[sorted.length - 1] || null
+
+    // Calculate estimated value of leftover milk
+    const totalDistributed = entries.reduce((sum, e) => sum + e.distributedMilk, 0)
+    const totalRevenue = entries.reduce((sum, e) => sum + e.totalAmount, 0)
+    const avgRate = totalDistributed > 0 ? totalRevenue / totalDistributed : 0
+    const totalLeftoverValue = totalLeftover * avgRate
+    const avgLeftoverValue = avgLeftover * avgRate
 
     // Last 7, 15, 30 days averages
     const last7 = entries.slice(0, 7)
@@ -67,23 +74,51 @@ function LeftoverReport() {
                         <div className="report-summary">
                             <div className="report-card warning">
                                 <h3>Total Leftover</h3>
-                                <div className="value">{formatLiters(totalLeftover)}</div>
+                                <div className="value">
+                                    {formatLiters(totalLeftover)}
+                                    {totalLeftoverValue > 0 && (
+                                        <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                            {formatCurrency(totalLeftoverValue)}
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="subtext">{entries.length} entries</div>
                             </div>
                             <div className="report-card">
                                 <h3>Average Daily Leftover</h3>
-                                <div className="value">{formatLiters(avgLeftover)}</div>
+                                <div className="value">
+                                    {formatLiters(avgLeftover)}
+                                    {avgLeftoverValue > 0 && (
+                                        <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                            {formatCurrency(avgLeftoverValue)}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="report-card" style={{ borderLeftColor: 'var(--error-500)' }}>
                                 <h3>Highest Leftover</h3>
-                                <div className="value">{highest ? formatLiters(highest.leftoverMilk) : '-'}</div>
+                                <div className="value">
+                                    {highest ? formatLiters(highest.leftoverMilk) : '-'}
+                                    {highest && avgRate > 0 && (
+                                        <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                            {formatCurrency(highest.leftoverMilk * avgRate)}
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="subtext">
                                     {highest ? `${highest.atmName || 'ATM'} • ${formatDate(highest.date, 'dd MMM')}` : ''}
                                 </div>
                             </div>
                             <div className="report-card success">
                                 <h3>Lowest Leftover</h3>
-                                <div className="value">{lowest ? formatLiters(lowest.leftoverMilk) : '-'}</div>
+                                <div className="value">
+                                    {lowest ? formatLiters(lowest.leftoverMilk) : '-'}
+                                    {lowest && avgRate > 0 && (
+                                        <div style={{ fontSize: '0.6em', opacity: 0.9, marginTop: '2px', fontWeight: '600' }}>
+                                            {formatCurrency(lowest.leftoverMilk * avgRate)}
+                                        </div>
+                                    )}
+                                </div>
                                 <div className="subtext">
                                     {lowest ? `${lowest.atmName || 'ATM'} • ${formatDate(lowest.date, 'dd MMM')}` : ''}
                                 </div>
