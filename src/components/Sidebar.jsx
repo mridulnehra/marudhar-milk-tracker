@@ -19,12 +19,26 @@ const navItems = [
     { path: '/settings', icon: '⚙️', label: 'Settings' }
 ]
 
-function Sidebar({ isOpen, onClose }) {
+function Sidebar({ isOpen, onClose, onLogout }) {
     const location = useLocation()
     const [expandedMenu, setExpandedMenu] = useState('Reports')
+    const [showLogoutModal, setShowLogoutModal] = useState(false)
 
     const isActive = (path) => location.pathname === path
     const isReportActive = () => location.pathname.startsWith('/reports')
+
+    const handleLogoutClick = () => {
+        setShowLogoutModal(true)
+    }
+
+    const confirmLogout = () => {
+        setShowLogoutModal(false)
+        onLogout()
+    }
+
+    const cancelLogout = () => {
+        setShowLogoutModal(false)
+    }
 
     return (
         <>
@@ -82,6 +96,18 @@ function Sidebar({ isOpen, onClose }) {
                             )
                         ))}
                     </div>
+
+                    {/* Logout Section */}
+                    <div className="nav-section">
+                        <div className="nav-section-title">Account</div>
+                        <button
+                            className="nav-item logout-btn"
+                            onClick={handleLogoutClick}
+                        >
+                            <span className="nav-item-icon">🚪</span>
+                            <span>Logout</span>
+                        </button>
+                    </div>
                 </nav>
 
                 <div style={{ padding: 'var(--spacing-4)', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
@@ -90,6 +116,25 @@ function Sidebar({ isOpen, onClose }) {
                     </div>
                 </div>
             </aside>
+
+            {/* Logout Confirmation Modal */}
+            {showLogoutModal && (
+                <div className="logout-modal-overlay" onClick={cancelLogout}>
+                    <div className="logout-modal" onClick={(e) => e.stopPropagation()}>
+                        <div className="logout-modal-icon">🚪</div>
+                        <h3>Logout</h3>
+                        <p>Are you sure you want to logout?</p>
+                        <div className="logout-modal-buttons">
+                            <button className="btn btn-secondary" onClick={cancelLogout}>
+                                Cancel
+                            </button>
+                            <button className="btn btn-danger" onClick={confirmLogout}>
+                                Yes, Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     )
 }
