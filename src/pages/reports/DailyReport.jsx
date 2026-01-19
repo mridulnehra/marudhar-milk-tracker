@@ -37,6 +37,7 @@ function DailyReport() {
         startingMilk: acc.startingMilk + Number(e.starting_milk || 0),
         leftoverMilk: acc.leftoverMilk + Number(e.leftover_milk || 0),
         distributedMilk: acc.distributedMilk + Number(e.distributed_milk || 0),
+        returnMilk: acc.returnMilk + Number(e.returned_milk || 0),
         cash: acc.cash + Number(e.cash || 0),
         upi: acc.upi + Number(e.upi || 0),
         card: acc.card + Number(e.card || 0),
@@ -45,7 +46,7 @@ function DailyReport() {
         others: acc.others + Number(e.others || 0),
         totalAmount: acc.totalAmount + Number(e.total_amount || 0)
     }), {
-        startingMilk: 0, leftoverMilk: 0, distributedMilk: 0,
+        startingMilk: 0, leftoverMilk: 0, distributedMilk: 0, returnMilk: 0,
         cash: 0, upi: 0, card: 0, udhaarPermanent: 0, udhaarTemporary: 0, others: 0, totalAmount: 0
     })
 
@@ -123,6 +124,7 @@ function DailyReport() {
                                             <th>ATM</th>
                                             <th>Starting (L)</th>
                                             <th>Leftover (L)</th>
+                                            <th>Return (L)</th>
                                             <th>Distributed (L)</th>
                                             <th>Cash</th>
                                             <th>UPI</th>
@@ -160,6 +162,9 @@ function DailyReport() {
                                                 </td>
                                                 <td>{Number(entry.starting_milk).toFixed(1)}</td>
                                                 <td>{Number(entry.leftover_milk).toFixed(1)}</td>
+                                                <td style={{ color: Number(entry.returned_milk || 0) > 0 ? 'var(--error-600)' : 'var(--gray-400)', fontWeight: Number(entry.returned_milk || 0) > 0 ? '500' : '400' }}>
+                                                    {Number(entry.returned_milk || 0).toFixed(1)}
+                                                </td>
                                                 <td style={{ color: 'var(--success-600)', fontWeight: '500' }}>
                                                     {Number(entry.distributed_milk).toFixed(1)}
                                                 </td>
@@ -185,6 +190,9 @@ function DailyReport() {
                                                         {formatCurrency(totalLeftoverValue)}
                                                     </div>
                                                 )}
+                                            </td>
+                                            <td style={{ color: totals.returnMilk > 0 ? 'var(--error-600)' : 'var(--gray-500)' }}>
+                                                {totals.returnMilk.toFixed(1)}
                                             </td>
                                             <td style={{ color: 'var(--success-600)' }}>{totals.distributedMilk.toFixed(1)}</td>
                                             <td>{formatCurrency(totals.cash)}</td>

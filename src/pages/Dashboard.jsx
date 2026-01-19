@@ -45,6 +45,7 @@ function Dashboard() {
         totalMilk: todayEntries.reduce((sum, e) => sum + (e?.totalMilk || 0), 0),
         distributedMilk: todayEntries.reduce((sum, e) => sum + (e?.distributedMilk || 0), 0),
         leftoverMilk: todayEntries.reduce((sum, e) => sum + (e?.leftoverMilk || 0), 0),
+        returnMilk: todayEntries.reduce((sum, e) => sum + (e?.returnMilk || 0), 0),
         totalAmount: todayEntries.reduce((sum, e) => sum + (e?.totalAmount || 0), 0),
         atmCount: todayEntries.length
     }
@@ -161,6 +162,15 @@ function Dashboard() {
                                 label="Leftover"
                                 variant="warning"
                             />
+                            {todayCombined.returnMilk > 0 && (
+                                <StatCard
+                                    icon="🔄"
+                                    iconClass="error"
+                                    value={formatLiters(todayCombined.returnMilk)}
+                                    label="Return Milk"
+                                    variant="error"
+                                />
+                            )}
                             <StatCard
                                 icon="💰"
                                 iconClass="info"
@@ -234,7 +244,7 @@ function Dashboard() {
                                         </span>
                                     </div>
 
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--spacing-3)' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: entry.returnMilk > 0 ? '1fr 1fr 1fr' : '1fr 1fr', gap: 'var(--spacing-3)' }}>
                                         <div style={{ textAlign: 'center', padding: 'var(--spacing-2)', background: 'var(--gray-50)', borderRadius: 'var(--radius-md)' }}>
                                             <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--gray-500)' }}>Distributed</div>
                                             <div style={{ fontWeight: '600', color: 'var(--success-600)' }}>{formatLiters(entry.distributedMilk)}</div>
@@ -243,6 +253,12 @@ function Dashboard() {
                                             <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--gray-500)' }}>Leftover</div>
                                             <div style={{ fontWeight: '600', color: 'var(--warning-600)' }}>{formatLiters(entry.leftoverMilk)}</div>
                                         </div>
+                                        {entry.returnMilk > 0 && (
+                                            <div style={{ textAlign: 'center', padding: 'var(--spacing-2)', background: 'var(--error-50)', borderRadius: 'var(--radius-md)' }}>
+                                                <div style={{ fontSize: 'var(--font-size-xs)', color: 'var(--error-600)' }}>Return</div>
+                                                <div style={{ fontWeight: '600', color: 'var(--error-600)' }}>{formatLiters(entry.returnMilk)}</div>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div style={{ marginTop: 'var(--spacing-3)', textAlign: 'center', padding: 'var(--spacing-2)', background: 'var(--primary-50)', borderRadius: 'var(--radius-md)' }}>

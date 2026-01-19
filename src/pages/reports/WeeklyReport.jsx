@@ -61,6 +61,7 @@ function WeeklyReport() {
     const totalDistributed = entries.reduce((sum, e) => sum + e.distributedMilk, 0)
     const totalRevenue = entries.reduce((sum, e) => sum + e.totalAmount, 0)
     const totalLeftover = entries.reduce((sum, e) => sum + e.leftoverMilk, 0)
+    const totalReturnMilk = entries.reduce((sum, e) => sum + (e.returnMilk || 0), 0)
     const avgDistributed = entries.length ? totalDistributed / entries.length : 0
     const avgLeftover = entries.length ? totalLeftover / entries.length : 0
 
@@ -162,6 +163,13 @@ function WeeklyReport() {
                                     )}
                                 </div>
                             </div>
+                            {totalReturnMilk > 0 && (
+                                <div className="report-card" style={{ borderLeftColor: 'var(--error-500)' }}>
+                                    <h3>Total Return Milk</h3>
+                                    <div className="value">{formatLiters(totalReturnMilk)}</div>
+                                    <div className="subtext">Milk returned/unsold</div>
+                                </div>
+                            )}
                             <div className="report-card" style={{ borderLeftColor: 'var(--info-500)' }}>
                                 <h3>Total Revenue</h3>
                                 <div className="value">{formatCurrency(totalRevenue)}</div>
@@ -202,6 +210,7 @@ function WeeklyReport() {
                                                 <th>Total (L)</th>
                                                 <th>Distributed (L)</th>
                                                 <th>Leftover (L)</th>
+                                                <th>Return (L)</th>
                                                 <th>Revenue</th>
                                             </tr>
                                         </thead>
@@ -233,6 +242,9 @@ function WeeklyReport() {
                                                     </td>
                                                     <td style={{ color: 'var(--warning-600)' }}>
                                                         {entry.leftoverMilk.toFixed(1)}
+                                                    </td>
+                                                    <td style={{ color: (entry.returnMilk || 0) > 0 ? 'var(--error-600)' : 'var(--gray-400)', fontWeight: (entry.returnMilk || 0) > 0 ? '500' : '400' }}>
+                                                        {(entry.returnMilk || 0).toFixed(1)}
                                                     </td>
                                                     <td style={{ fontWeight: '600' }}>{formatCurrency(entry.totalAmount)}</td>
                                                 </tr>

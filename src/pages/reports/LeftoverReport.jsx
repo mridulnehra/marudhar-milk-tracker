@@ -21,7 +21,9 @@ function LeftoverReport() {
     }
 
     const totalLeftover = entries.reduce((sum, e) => sum + e.leftoverMilk, 0)
+    const totalReturnMilk = entries.reduce((sum, e) => sum + (e.returnMilk || 0), 0)
     const avgLeftover = entries.length ? totalLeftover / entries.length : 0
+    const avgReturnMilk = entries.length ? totalReturnMilk / entries.length : 0
     const sorted = [...entries].sort((a, b) => b.leftoverMilk - a.leftoverMilk)
     const highest = sorted[0] || null
     const lowest = sorted[sorted.length - 1] || null
@@ -32,6 +34,7 @@ function LeftoverReport() {
     const avgRate = totalDistributed > 0 ? totalRevenue / totalDistributed : 0
     const totalLeftoverValue = totalLeftover * avgRate
     const avgLeftoverValue = avgLeftover * avgRate
+    const totalReturnValue = totalReturnMilk * avgRate
 
     // Last 7, 15, 30 days averages
     const last7 = entries.slice(0, 7)
@@ -125,6 +128,34 @@ function LeftoverReport() {
                             </div>
                         </div>
 
+                        {/* Return Milk Summary */}
+                        {totalReturnMilk > 0 && (
+                            <div className="card" style={{ marginBottom: 'var(--spacing-6)' }}>
+                                <div className="card-header"><h3 className="card-title">🔄 Return Milk Summary</h3></div>
+                                <div className="card-body">
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 'var(--spacing-4)' }}>
+                                        <div className="payment-item">
+                                            <div className="payment-item-details">
+                                                <div className="payment-item-label">Total Return</div>
+                                                <div className="payment-item-value" style={{ color: 'var(--error-600)' }}>{formatLiters(totalReturnMilk)}</div>
+                                                {totalReturnValue > 0 && (
+                                                    <div style={{ fontSize: 'var(--font-size-sm)', color: 'var(--gray-500)' }}>
+                                                        {formatCurrency(totalReturnValue)}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="payment-item">
+                                            <div className="payment-item-details">
+                                                <div className="payment-item-label">Avg Daily Return</div>
+                                                <div className="payment-item-value" style={{ color: 'var(--error-600)' }}>{formatLiters(avgReturnMilk)}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="card" style={{ marginBottom: 'var(--spacing-6)' }}>
                             <div className="card-header"><h3 className="card-title">📊 Average Leftover Trends</h3></div>
                             <div className="card-body">
@@ -149,7 +180,7 @@ function LeftoverReport() {
                             <div className="card-body" style={{ padding: 0 }}>
                                 <div className="table-container">
                                     <table className="table">
-                                        <thead><tr><th>Date</th><th>Shift</th><th>ATM</th><th>Starting (L)</th><th>Leftover (L)</th><th>Leftover %</th></tr></thead>
+                                        <thead><tr><th>Date</th><th>Shift</th><th>ATM</th><th>Starting (L)</th><th>Leftover (L)</th><th>Return (L)</th><th>Leftover %</th></tr></thead>
                                         <tbody>
                                             {entries.map(e => {
                                                 const pct = e.startingMilk ? (e.leftoverMilk / e.startingMilk * 100) : 0
@@ -173,6 +204,9 @@ function LeftoverReport() {
                                                         </td>
                                                         <td>{e.startingMilk.toFixed(1)}</td>
                                                         <td style={{ color: pct > 15 ? 'var(--error-500)' : pct > 10 ? 'var(--warning-600)' : 'var(--success-600)', fontWeight: '500' }}>{e.leftoverMilk.toFixed(1)}</td>
+                                                        <td style={{ color: (e.returnMilk || 0) > 0 ? 'var(--error-600)' : 'var(--gray-400)', fontWeight: (e.returnMilk || 0) > 0 ? '500' : '400' }}>
+                                                            {(e.returnMilk || 0).toFixed(1)}
+                                                        </td>
                                                         <td>{formatPercentage(pct)}</td>
                                                     </tr>
                                                 )
