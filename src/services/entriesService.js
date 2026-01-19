@@ -130,6 +130,7 @@ export async function createEntry(entryData) {
             starting_milk: entryData.totalMilk || entryData.startingMilk,
             leftover_milk: entryData.leftoverMilk,
             distributed_milk: entryData.distributedMilk,
+            returned_milk: entryData.returnMilk || 0,
             cash: entryData.cash || 0,
             cash_liters: entryData.cashLiters || 0,
             upi: entryData.upi || 0,
@@ -159,6 +160,7 @@ export async function updateEntry(id, entryData) {
             starting_milk: entryData.totalMilk || entryData.startingMilk,
             leftover_milk: entryData.leftoverMilk,
             distributed_milk: entryData.distributedMilk,
+            returned_milk: entryData.returnMilk || 0,
             cash: entryData.cash || 0,
             cash_liters: entryData.cashLiters || 0,
             upi: entryData.upi || 0,
@@ -181,7 +183,6 @@ export async function updateEntry(id, entryData) {
     if (error) throw error
     return data
 }
-
 // Delete entry
 export async function deleteEntry(id) {
     const { error } = await supabase
@@ -304,6 +305,7 @@ export function transformEntry(dbEntry) {
         startingMilk: Number(dbEntry.starting_milk), // legacy alias
         leftoverMilk: Number(dbEntry.leftover_milk),
         distributedMilk: Number(dbEntry.distributed_milk),
+        returnMilk: Number(dbEntry.returned_milk || 0),
         cash: Number(dbEntry.cash || 0),
         cashLiters: Number(dbEntry.cash_liters || 0),
         upi: Number(dbEntry.upi || 0),

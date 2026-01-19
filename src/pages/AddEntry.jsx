@@ -41,7 +41,8 @@ function AddEntry() {
         udhaarTemporaryLiters: '',
         udhaarTemporary: '',
         othersLiters: '',
-        others: ''
+        others: '',
+        returnMilk: ''
     })
 
     // Load ATMs and milk rate on mount
@@ -112,7 +113,8 @@ function AddEntry() {
                     udhaarTemporaryLiters: transformed.udhaarTemporaryLiters.toString(),
                     udhaarTemporary: transformed.udhaarTemporary.toString(),
                     othersLiters: transformed.othersLiters.toString(),
-                    others: transformed.others.toString()
+                    others: transformed.others.toString(),
+                    returnMilk: transformed.returnMilk.toString()
                 })
             } else {
                 setExistingEntry(null)
@@ -124,7 +126,8 @@ function AddEntry() {
                     cardLiters: '', card: '',
                     udhaarPermanentLiters: '', udhaarPermanent: '',
                     udhaarTemporaryLiters: '', udhaarTemporary: '',
-                    othersLiters: '', others: ''
+                    othersLiters: '', others: '',
+                    returnMilk: ''
                 }))
             }
         } catch (err) {
@@ -171,7 +174,8 @@ function AddEntry() {
 
     // Calculate leftover milk
     const totalMilk = parseFloat(formData.totalMilk) || 0
-    const leftoverMilk = Math.max(0, totalMilk - distributedMilk)
+    const returnMilk = parseFloat(formData.returnMilk) || 0
+    const leftoverMilk = Math.max(0, totalMilk - distributedMilk - returnMilk)
 
     // Calculate total amount
     const totalAmount = [
@@ -191,8 +195,11 @@ function AddEntry() {
         if (!formData.totalMilk || parseFloat(formData.totalMilk) <= 0) {
             newErrors.totalMilk = 'Total milk is required'
         }
-        if (distributedMilk > totalMilk) {
-            newErrors.totalMilk = 'Distributed milk cannot exceed total milk'
+
+        // Available milk = total - return
+        const availableMilk = totalMilk - returnMilk
+        if (distributedMilk > availableMilk) {
+            newErrors.totalMilk = `Distributed milk (${distributedMilk}L) cannot exceed available milk (${availableMilk}L = Total ${totalMilk}L - Return ${returnMilk}L)`
         }
 
         setErrors(newErrors)
@@ -211,6 +218,7 @@ function AddEntry() {
             totalMilk: parseFloat(formData.totalMilk) || 0,
             leftoverMilk,
             distributedMilk,
+            returnMilk: parseFloat(formData.returnMilk) || 0,
             cashLiters: parseFloat(formData.cashLiters) || 0,
             cash: parseFloat(formData.cash) || 0,
             upiLiters: parseFloat(formData.upiLiters) || 0,
@@ -439,6 +447,19 @@ function AddEntry() {
                                 <div className="calculated-value-number">{formatLiters(leftoverMilk)}</div>
                             </div>
                         </div>
+
+                        <div style={{ marginTop: 'var(--spacing-4)', maxWidth: '300px' }}>
+                            <Input
+                                label="Return Milk (Not Sold)"
+                                type="text"
+                                inputMode="decimal"
+                                placeholder="e.g., 10"
+                                suffix="Liters"
+                                value={formData.returnMilk}
+                                onChange={(e) => handleChange('returnMilk', e.target.value)}
+                                error={errors.returnMilk}
+                            />
+                        </div>
                     </div>
 
                     {/* Payment Collection */}
@@ -562,8 +583,8 @@ function AddEntry() {
                             {existingEntry ? '💾 Update Entry' : '💾 Save Entry'}
                         </Button>
                     </div>
-                </form>
-            </div>
+                </form >
+            </div >
         </>
     )
 }
