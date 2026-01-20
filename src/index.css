@@ -358,10 +358,10 @@ a:hover {
 .mobile-toggle {
   display: none;
   position: fixed;
-  bottom: var(--spacing-6);
-  right: var(--spacing-6);
-  width: 56px;
-  height: 56px;
+  top: var(--spacing-4);
+  left: var(--spacing-4);
+  width: 48px;
+  height: 48px;
   border-radius: var(--radius-full);
   background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
   color: white;
@@ -1130,6 +1130,7 @@ a:hover {
 
   .page-header {
     padding: var(--spacing-4) var(--spacing-5);
+    padding-left: calc(48px + var(--spacing-4) + var(--spacing-4));
   }
 
   .page-title {
